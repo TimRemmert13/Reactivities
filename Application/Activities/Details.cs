@@ -1,11 +1,13 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using Domain;
 using MediatR;
 using Persistence;
 
-namespace Application
+namespace Application.Activities
 {
     public class Details
     {
@@ -25,6 +27,11 @@ namespace Application
             public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities.FindAsync(request.Id);
+                
+                if (activity == null) {
+                    Console.Write("inside activity equals null");
+                    throw new RestException(HttpStatusCode.NotFound, new {activity = "Not found"});
+                }
                 return activity;
             }
         }
